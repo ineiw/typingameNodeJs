@@ -1,39 +1,45 @@
 import keypress from 'keypress';
 import chalk from 'chalk';
+import fs from 'fs';
 
-let targetCh = 'i am super hero but you are the best hero thats why i am the best hero';
+let targetCh = '';
 let startTime = new Date().getTime();
 
 let totalCh = '';
-let idx = 0
+let idx = 0;
+
+const rawData = fs.readFileSync('data.json');
+const data = JSON.parse(rawData);
+
+let dataIdx = Math.floor(Math.random() * (data.data.length));
+targetCh = data.data[dataIdx].content;
 
 const gameLoop = () => {
     // 게임 로직 처리
     let currentTime = new Date().getTime();
     let deltaTime = currentTime - startTime;
     console.clear();
-    
-    for (let i=0;i<targetCh.length;i++){
-        if (targetCh[i] === totalCh[i] && targetCh[i] !== ' '){
+    for (let i = 0; i < targetCh.length; i++) {
+        if (targetCh[i] === totalCh[i] && targetCh[i] !== ' ') {
             process.stdout.write((chalk.green(targetCh[i])));
         }
-        else if (totalCh.length > i){
+        else if (totalCh.length > i) {
             process.stdout.write(chalk.red(targetCh[i]));
         }
-        else{
+        else {
             process.stdout.write(chalk.gray(targetCh[i]));
         }
     }
     console.log();
+    console.log(totalCh);
     if (targetCh === totalCh) {
-        console.log('your time : ', (deltaTime/1000)%60, 'sec');
+        console.log('your time : ', (deltaTime / 1000) % 60, 'sec');
         process.exit();
     }
-    console.log(totalCh);
-    console.log('deltaTime', (deltaTime/1000)%60);
+    console.log('deltaTime', (deltaTime / 1000) % 60);
 
     // 다음 프레임을 예약합니다.
-    setTimeout(gameLoop, 1000 / 60); // 60 FPS로 설정
+    setTimeout(gameLoop, 2100 / 60); // 60 FPS로 설정
 };
 gameLoop(startTime); // 게임 루프 시작
 
@@ -55,7 +61,7 @@ process.stdin.on('keypress', (ch, key) => {
         totalCh += '\n';
         idx += 1;
     }
-    else if (typeof ch === 'string' && ch.length === 1){
+    else if (typeof ch === 'string' && ch.length === 1) {
         totalCh += ch;
         idx += 1;
     }
